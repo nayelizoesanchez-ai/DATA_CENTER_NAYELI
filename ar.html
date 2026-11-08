@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Centro de Datos | Realidad Aumentada</title>
+<script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+ 
+<style>
+body{
+    margin:0;
+    font-family:system-ui
+}
+.bar{
+    position:fixed;
+    top:8px;
+    left:8px;
+    right:8px;
+    z-index:9999;
+    background:#10283de8;
+    color:white;
+    border-radius:9px;
+    padding:12px;
+    font-size:14px
+}
+.bar a{
+    color:#82eaff
+}
+.bar button{
+    padding:6px 10px;
+    margin:2px 4px 2px 0;
+    border-radius:6px;
+    cursor:pointer
+}
+.bar small{
+    display:block;
+    margin-top:5px
+}
+</style>
+</head>
+<body>
+ 
+<!-- ===== MENU PRINCIPAL ===== -->
+<div class="bar"><b>Centro de Datos | Realidad Aumentada</b> · <a href="index.html">Volver a VR</a>
+    <div style="margin-top:7px">
+        <button onclick="tipoAR('servers')">Servidores</button>
+        <button onclick="tipoAR('router')">Router WiFi</button>
+        <button onclick="tipoAR('desk')">Escritorio</button>
+    </div>
+    <small>Autorice la cámara y apunte al marcador imagen.jpg impreso. Use HTTPS en Android. Si no reconoce la
+    imagen, revise luz y distancia (30–50 cm).</small>
+</div>
+ 
+<a-scene mindar-image="imageTargetSrc: targets.mind;"
+    renderer="colorManagement: true" vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+ 
+    <a-assets>
+        <a-asset-item id="modelo-servidores" src="models/servers.glb"></a-asset-item>
+        <a-asset-item id="modelo-router" src="models/wifi_router.glb"></a-asset-item>
+        <a-asset-item id="modelo-escritorio" src="models/escritorio.glb"></a-asset-item>
+    </a-assets>
+ 
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+ 
+    <a-entity mindar-image-target="targetIndex: 0">
+ 
+        <!-- Servidores (visible al inicio) -->
+        <a-entity id="ar-servers">
+            <a-gltf-model src="#modelo-servidores" position="0 -.28 .1"
+                scale=".65 .65 .65" rotation="0 0 0"></a-gltf-model>
+        </a-entity>
+ 
+        <!-- Router -->
+        <a-entity id="ar-router" visible="false">
+            <a-gltf-model src="#modelo-router" position="0 -0.15 0.1"
+                rotation="0 0 0" scale="2 2 2"></a-gltf-model>
+        </a-entity>
+ 
+        <!-- Escritorio -->
+        <a-entity id="ar-desk" visible="false">
+            <a-gltf-model src="#modelo-escritorio" position="0 -.03 .1"
+                scale=".32 .32 .32" rotation="0 180 0"></a-gltf-model>
+        </a-entity>
+ 
+        <!-- Cartel de estado (cambia segun el equipo elegido) -->
+        <a-plane width="1.1" height=".28" color="#071c2b" opacity=".9"
+            position="0 .47 .12"></a-plane>
+        <a-text id="ar-estado" value="SERVIDORES | ACTIVO" align="center"
+            width="1.8" color="#6dffb5" position="0 .47 .14"></a-text>
+ 
+    </a-entity>
+</a-scene>
+ 
+<script>
+function tipoAR(tipo){
+    const ids = { servers: 'ar-servers', router: 'ar-router', desk: 'ar-desk' };
+    Object.keys(ids).forEach(k =>
+        document.getElementById(ids[k]).setAttribute('visible', k === tipo));
+    const txt = {
+        servers: 'SERVIDORES | ACTIVO',
+        router: 'ROUTER WIFI | ACTIVO',
+        desk: 'PUESTO TECNICO'
+    };
+    document.querySelector('#ar-estado').setAttribute('value', txt[tipo]);
+}
+</script>
+ 
+</body>
+</html>
